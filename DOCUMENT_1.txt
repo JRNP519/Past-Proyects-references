@@ -1,6 +1,7 @@
 try Date.From(Text.Range([#"Source.Name"], Text.Length([#"Source.Name"]) - 15, 10)) otherwise null   para procesadas
 
-try Date.From("20" & Text.Range([#"Source.Name"], Text.Length([#"Source.Name"]) - 8, 8)) otherwise null   para sometidas
+try Date.From("20" & Text.Range([#"Source.Name"], Text.Length([#"Source.Name"]) - 11, 8)) otherwise null
+   para sometidas
 
 try Date.From(Text.Middle([#"Source.Name"], Text.Length([#"Source.Name"]) - 12, 2) & "-" &
               Text.Middle([#"Source.Name"], Text.Length([#"Source.Name"]) - 10, 2) & "-" &
