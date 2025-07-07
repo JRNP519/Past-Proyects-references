@@ -16,4 +16,7 @@ try Date.FromText(
           para no procesadas
 
 
+Para quitar los casos que no se toman en cuenta dentro del analisis:
+
+Table.SelectRows(#"Paso anterior", each [Referencia] <> 0)
 
