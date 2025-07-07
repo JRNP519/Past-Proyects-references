@@ -1,6 +1,11 @@
 try Date.From(Text.Range([#"Source.Name"], Text.Length([#"Source.Name"]) - 15, 10)) otherwise null   para procesadas
 
-try Date.FromText("20" & Text.Range(Text.BeforeDelimiter([#"Source.Name"], ".xlsx"), Text.Length(Text.BeforeDelimiter([#"Source.Name"], ".xlsx")) - 8, 8)) otherwise null  para sometidas
+try Date.FromText(
+    Text.Middle(Text.BeforeDelimiter([#"Source.Name"], ".xlsx"), Text.Length(Text.BeforeDelimiter([#"Source.Name"], ".xlsx")) - 8, 2) & "-" &
+    Text.Middle(Text.BeforeDelimiter([#"Source.Name"], ".xlsx"), Text.Length(Text.BeforeDelimiter([#"Source.Name"], ".xlsx")) - 5, 2) & "-" &
+    "20" & Text.End(Text.BeforeDelimiter([#"Source.Name"], ".xlsx"), 2)
+) otherwise null
+  para sometidas
 
 
 try Date.From(Text.Middle([#"Source.Name"], Text.Length([#"Source.Name"]) - 12, 2) & "-" &
