@@ -8,9 +8,12 @@ try Date.FromText(
   para sometidas
 
 
-try Date.From(Text.Middle([#"Source.Name"], Text.Length([#"Source.Name"]) - 12, 2) & "-" &
-              Text.Middle([#"Source.Name"], Text.Length([#"Source.Name"]) - 10, 2) & "-" &
-              Text.Middle([#"Source.Name"], Text.Length([#"Source.Name"]) - 8, 4)) otherwise null          para no procesadas
+try Date.FromText(
+    Text.Middle(Text.BeforeDelimiter([#"Source.Name"], ".xlsx"), Text.Length(Text.BeforeDelimiter([#"Source.Name"], ".xlsx")) - 8, 2) & "-" &
+    Text.Middle(Text.BeforeDelimiter([#"Source.Name"], ".xlsx"), Text.Length(Text.BeforeDelimiter([#"Source.Name"], ".xlsx")) - 6, 2) & "-" &
+    Text.End(Text.BeforeDelimiter([#"Source.Name"], ".xlsx"), 4)
+) otherwise null
+          para no procesadas
 
 
 
