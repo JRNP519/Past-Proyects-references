@@ -1,1 +1,2 @@
-try Date.From(Text.Range([Name], Text.Length([Name]) - 9, 10)) otherwise null
+try Date.From(Text.Range([#"Source.Name"], Text.Length([#"Source.Name"]) - 9, 10)) otherwise null
+
