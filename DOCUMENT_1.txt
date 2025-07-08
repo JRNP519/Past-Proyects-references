@@ -50,8 +50,8 @@ Combinación de análisis
 
 Text.From(Record.FieldOrDefault(_, "Numero reclamación", "")) & "-" &
 Text.From(Record.FieldOrDefault(_, "Numero de cuenta", "")) & "-" &
-(try Text.From([Referencia_LBTR]) otherwise "") & "-" &
-(try Text.From([Valor_LBTR]) otherwise "")
+Text.From(Record.FieldOrDefault(_, "Referencia_LBTR", "")) & "-" &
+Text.From(Record.FieldOrDefault(_, "Valor_LBTR", ""))
 
 
 
