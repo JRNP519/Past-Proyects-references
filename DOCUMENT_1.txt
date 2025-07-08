@@ -20,3 +20,26 @@ Para quitar los casos que no se toman en cuenta dentro del analisis:
 
 Table.SelectRows(#"Paso anterior", each [Referencia] <> 0)
 
+
+
+PARA CRUCE
+
+
+Primer en lbtr no procesada
+
+Crear columna Referencia_Recortada (primeros 9 dígitos del TRANSACTION_ID):
+
+Text.Start(Text.From([TRANSACTION_ID]), 9)
+
+Cambiar nombre de columnas para que se alineen con las transacciones:
+
+Table.RenameColumns(#"Paso anterior", {
+  {"CUENTA", "Numero de cuenta"},
+  {"Referencia_Recortada", "Referencia"},
+  {"MONTO", "Valor"}
+})
+
+
+
+
+
