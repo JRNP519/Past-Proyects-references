@@ -39,6 +39,9 @@ Table.RenameColumns(#"Paso anterior", {
   {"MONTO", "Valor"}
 })
 
+join key column
+
+[Numero de cuenta] & "-" & Text.From([Referencia]) & "-" & Text.From([Valor])
 
 
 
