@@ -62,8 +62,11 @@ if [Source.Name_LBTR] <> null then [Source.Name_LBTR] else null
 
 Dictamen Inicial
 
-if [Combinación de análisis] <> null and Text.Length([Combinación de análisis]) > 0 then "Aprobado"
-else "Rechazada, no aplica a resolutor masivo"
+if Text.Trim([Referencia_LBTR]) <> "" and Text.Trim([Valor_LBTR]) <> "" then
+    "Aprobado"
+else
+    "Rechazada, no aplica a resolutor masivo"
+
 
 Respuesta
 
