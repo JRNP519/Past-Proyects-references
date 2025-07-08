@@ -70,12 +70,13 @@ else
 
 Respuesta
 
-if [Dictamen Inicial] = "Aprobado" then
+if [Dictamen Inicial] = "Reclamación aprobada" then
     "Reclamación " & Text.From([Numero reclamación]) &
     " aprobada. Transacción reversada con el reporte de la fecha " &
     Text.From([FechaReporte_LBTR])
 else
-    null
+    ""
+
 
 
 
