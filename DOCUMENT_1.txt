@@ -44,5 +44,33 @@ join key column
 [Numero de cuenta] & "-" & Text.From([Referencia]) & "-" & Text.From([Valor])
 
 
+VARIABLES CREADAS
+
+Combinación de análisis
+
+Record.FieldOrDefault(_, "Numero reclamación", "") & "-" &
+Record.FieldOrDefault(_, "Numero de cuenta", "") & "-" &
+Record.FieldOrDefault(_, "Referencia", "") & "-" &
+Record.FieldOrDefault(_, "Valor", "")
+
+
+LBTR Identificado
+
+if [Source.Name_LBTR] <> null then [Source.Name_LBTR] else null
+
+Dictamen Inicial
+
+if [Combinación de análisis] <> null and Text.Length([Combinación de análisis]) > 0 then "Aprobado"
+else "Rechazada, no aplica a resolutor masivo"
+
+Respuesta
+
+if [Dictamen Inicial] = "Aprobado" then
+    "Reclamación " & Text.From([Numero reclamación]) &
+    " aprobada. Transacción reversada con el reporte de la fecha " &
+    Text.From([FechaReporte_LBTR])
+else
+    null
+
 
 
