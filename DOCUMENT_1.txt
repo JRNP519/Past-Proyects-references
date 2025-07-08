@@ -48,10 +48,11 @@ VARIABLES CREADAS
 
 Combinación de análisis
 
-Record.FieldOrDefault(_, "Numero reclamación", "") & "-" &
-Record.FieldOrDefault(_, "Numero de cuenta", "") & "-" &
-Record.FieldOrDefault(_, "Referencia", "") & "-" &
-Record.FieldOrDefault(_, "Valor", "")
+Text.From(Record.FieldOrDefault(_, "Numero reclamación", "")) & "-" &
+Text.From(Record.FieldOrDefault(_, "Numero de cuenta", "")) & "-" &
+Text.From(Record.FieldOrDefault(_, "Referencia_LBTR", "")) & "-" &
+Text.From(Record.FieldOrDefault(_, "Valor_LBTR", ""))
+
 
 
 LBTR Identificado
