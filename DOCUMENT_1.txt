@@ -81,6 +81,13 @@ else
 Testing en Asignado a, paso final para el resolutor
 
 
- #"Previous Step" = Table.ReplaceErrorValues(#"Previous Step", {{"Descripción", ""}})
+let
+    Source = Excel.Workbook(Parameter5, null, true),
+    #"Promoted Headers" = Table.PromoteHeaders(Source{[Item="output - 2025-07-08T075640.744",Kind="Sheet"]}[Data], [PromoteAllScalars=true]),
+    #"Changed Type" = Table.TransformColumnTypes(#"Promoted Headers", {{"N° de identificación", type text}, {"Descripción", type text}}),
+    #"Cleaned Errors" = Table.ReplaceErrorValues(#"Changed Type", {{"Descripción", ""}})
+in
+    #"Cleaned Errors"
+
 
 
