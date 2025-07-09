@@ -92,6 +92,9 @@ in
 
 Ajuste de fecha para que se muestre el anterior:
 
+Codigo anterior: = Table.AddColumn(#"Added Custom2", "Respuesta", each if [Dictamen Inicial] = "Reclamación Aprobada" then "Reclamación " & Text.From([Numero reclamación]) & " aprobada. Transacción reversada con el reporte de la fecha " & Text.From([FechaReporte_LBTR]))
+
+
 = Table.AddColumn(#"Added Custom2", "Respuesta", each 
     if [Dictamen Inicial] = "Reclamación Aprobada" then 
         let
