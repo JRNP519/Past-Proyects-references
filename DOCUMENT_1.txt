@@ -96,14 +96,16 @@ Codigo anterior: = Table.AddColumn(#"Added Custom2", "Respuesta", each if [Dicta
 
 
 = Table.AddColumn(#"Added Custom2", "Respuesta", each 
-    if [Dictamen Inicial] = "Reclamación Aprobada" then 
+    if [Dictamen Inicial] = "Reclamación Aprobada" then
         let
-            fechaOriginal = [FechaReporte_LBTR],
-            diaDeLaSemana = Date.DayOfWeek(fechaOriginal, Day.Monday),
-            fechaAjustada = if diaDeLaSemana = 0 then Date.AddDays(fechaOriginal, -3) else Date.AddDays(fechaOriginal, -1)
+            originalDate = [FechaReporte_LBTR],
+            weekdayNum = Date.DayOfWeek(originalDate, Day.Monday),  // lunes = 0
+            adjustedDate = if weekdayNum = 0 then Date.AddDays(originalDate, -3) else Date.AddDays(originalDate, -1)
         in
-            "Reclamación " & Text.From([Numero reclamación]) & 
-            " aprobada. Transacción reversada con el reporte de la fecha " & 
-            Date.ToText(fechaAjustada, "dd/MM/yyyy")
-    else null)
+            "Reclamación " & Text.From([Número reclamación]) & 
+            " aprobada. Transacción reversada con el reporte de la fecha " & Date.ToText(adjustedDate, "dd/MM/yyyy")
+    else
+        "No aplica."
+)
+
 
