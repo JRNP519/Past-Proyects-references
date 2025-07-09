@@ -1,0 +1,124 @@
+import pandas as pd
+import numpy as np
+import os
+from datetime import datetime
+
+def excel_date_to_datetime(excel_serial):
+    if isinstance(excel_serial, (pd.Timestamp, datetime)):
+        return excel_serial
+    try:
+        serial = float(excel_serial)
+    except (ValueError, TypeError):
+        return pd.NaT
+    return pd.to_datetime('1899-12-30') + pd.to_timedelta(serial, unit='D')
+
+RAW_PATH = r"C:\Users\QP447QM\OneDrive - EY\Carina Echeverry's files - Banreservas - Estadísticas\6. Fase III.2. Fase II - Proyecto Reclamos_ Kit información\CRM Fecha de Inicio Acuerdo CRUDE.xlsx"
+CAT_PATH = r"C:\Users\QP447QM\OneDrive - EY\Carina Echeverry's files - Banreservas - Estadísticas\6. Fase III.2. Fase II - Proyecto Reclamos_ Kit información\CATALOGO PARAMETROS GRUPO CIERRE.xlsx"
+
+df = pd.read_excel(RAW_PATH, engine="openpyxl")
+
+if 'Moneda' in df.columns:
+    df['Moneda'] = df['Moneda'].astype(str).str.strip().str.upper()
+
+date_cols = [
+    "Fecha apertura", "Fecha de cierre", "Fecha de resolución",
+    "Fecha inicio acuerdo de servicio", "Fecha fin acuerdo de servicio"
+]
+for col in date_cols:
+    if col in df.columns:
+        df[col] = df[col].apply(excel_date_to_datetime)
+
+cat = pd.read_excel(CAT_PATH, engine="openpyxl")[['USUARIO', 'GRUPO']]
+
+if 'Tipo' in df.columns and 'Subtipo' in df.columns:
+    idx = df.columns.get_loc('Subtipo') + 1
+    df.insert(idx, 'Tipo con subtipo', df['Tipo'].fillna('') + ' ' + df['Subtipo'].fillna(''))
+
+def get_grupo_resolutor(row):
+    for user_field in ['Usuario de decisión', 'Usuario de cierre']:
+        match = cat.loc[cat['USUARIO'] == row.get(user_field), 'GRUPO']
+        if not match.empty:
+            return match.values[0]
+    return 'Sin Grupo Responsable'
+
+if 'Usuario de decisión' in df.columns:
+    idx = df.columns.get_loc('Usuario de decisión') + 1
+    df.insert(idx, 'Grupo resolutor', df.apply(get_grupo_resolutor, axis=1))
+
+if 'Descripción' in df.columns:
+    idx = df.columns.get_loc('Descripción') + 1
+    df.insert(idx, 'Mio', df['Descripción'].str.contains(r'\bMio\b', case=False, na=False))
+
+if 'Mio' in df.columns:
+    idx = df.columns.get_loc('Mio') + 1
+    df.insert(idx, 'Tu efectivo', df['Descripción'].str.contains(r'\bTu\sEfectivo\b', case=False, na=False))
+
+if 'Tu efectivo' in df.columns:
+    idx = df.columns.get_loc('Tu efectivo') + 1
+    df.insert(idx, 'Alma', df['Descripción'].str.contains('Creado por la app.', na=False))
+
+def evaluar_sla(row):
+    cierre = row.get('Fecha de cierre')
+    fin_sla = row.get('Fecha fin acuerdo de servicio')
+    if pd.isna(cierre) or pd.isna(fin_sla):
+        return np.nan
+    return 'Cumple' if cierre <= fin_sla else 'No Cumple'
+
+if 'Fecha fin acuerdo de servicio' in df.columns:
+    idx = df.columns.get_loc('Fecha fin acuerdo de servicio') + 1
+    df.insert(idx, 'SLA', df.apply(evaluar_sla, axis=1))
+
+def calcular_duracion(row):
+    inicio = row.get('Fecha inicio acuerdo de servicio')
+    cierre = row.get('Fecha de cierre')
+    if pd.isna(inicio) or pd.isna(cierre):
+        return np.nan
+    return np.busday_count(inicio.date(), cierre.date()) + 1
+
+if 'SLA' in df.columns:
+    idx = df.columns.get_loc('SLA') + 1
+    df.insert(idx, 'Duración', df.apply(calcular_duracion, axis=1))
+
+def categorizar_monto(row):
+    raw = str(row.get('Monto total')).strip()
+    clean = raw.replace('.', '') if ',' in raw else raw
+    clean = clean.replace(',', '.')
+    try:
+        monto = float(clean)
+    except (ValueError, TypeError):
+        return np.nan
+    moneda = str(row.get('Moneda')).strip().upper()
+    if moneda == 'DOP':
+        dop = [(0,20,'0 - 20'), (20,500,'21 - 500'), (500,1000,'500 - 1,000'),
+               (1000,5000,'1,000 - 5,000'), (5000,10000,'5,000 - 10,000'),
+               (10000,50000,'10,000 - 50,000'), (50000,100000,'50,000 - 100,000'),
+               (100000,500000,'100,000 - 500,000'), (500000,1000000,'500,000 - 1,000,000'),
+               (1000000,5000000,'1,000,000 - 5,000,000')]
+        for low, high, label in dop:
+            if low <= monto <= high:
+                return label
+        return 'Mayor a 5MM'
+    if moneda in ['USD','EUR']:
+        usd = [(0,25,'0 - 25'), (25,100,'25 - 100'), (100,500,'100 - 500'),
+               (500,1000,'500 - 1,000'), (1000,5000,'1,000 - 5,000'),
+               (5000,25000,'5,000 - 25,000'), (25000,50000,'25,000 - 50,000')]
+        for low, high, label in usd:
+            if low <= monto <= high:
+                return label
+        return 'Mayor a 50K'
+    return np.nan
+
+if 'Monto total' in df.columns:
+    idx = df.columns.get_loc('Monto total') + 1
+    df.insert(idx, 'Monto', df.apply(categorizar_monto, axis=1))
+
+if 'Nombre' in df.columns and 'Apellidos' in df.columns:
+    idx = df.columns.get_loc('Apellidos') + 1
+    df.insert(idx, 'Nombre Legal', df['Nombre'].fillna('') + ' ' + df['Apellidos'].fillna(''))
+
+# Opciones de exportación:
+# df.to_excel("resultado_reclamos.xlsx", index=False)
+# df.to_csv("resultado_reclamos.csv", index=False, sep=';', encoding="utf-8-sig")
+# df.to_csv(os.path.join(os.path.dirname(RAW_PATH), "resultado_reclamos_utf8.csv"), index=False, encoding="utf-8")
+# df.to_excel(os.path.join(os.path.dirname(RAW_PATH), "resultado_reclamos.xlsx"), index=False)
+# df.to_csv(os.path.join(os.path.dirname(RAW_PATH), "resultado_reclamos_windows_sep.csv"), index=False, sep=';', encoding="utf-8-sig")
