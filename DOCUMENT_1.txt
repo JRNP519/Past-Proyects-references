@@ -90,4 +90,17 @@ in
     #"Cleaned Errors"
 
 
+Ajuste de fecha para que se muestre el anterior:
+
+= Table.AddColumn(#"Added Custom2", "Respuesta", each 
+    if [Dictamen Inicial] = "Reclamación Aprobada" then 
+        let
+            fechaOriginal = [FechaReporte_LBTR],
+            diaDeLaSemana = Date.DayOfWeek(fechaOriginal, Day.Monday),
+            fechaAjustada = if diaDeLaSemana = 0 then Date.AddDays(fechaOriginal, -3) else Date.AddDays(fechaOriginal, -1)
+        in
+            "Reclamación " & Text.From([Numero reclamación]) & 
+            " aprobada. Transacción reversada con el reporte de la fecha " & 
+            Date.ToText(fechaAjustada, "dd/MM/yyyy")
+    else null)
 
