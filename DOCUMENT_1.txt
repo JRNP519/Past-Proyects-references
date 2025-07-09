@@ -78,5 +78,9 @@ else
     ""
 
 
+Testing en Asignado a, paso final para el resolutor
+
+
+ #"Previous Step" = Table.ReplaceErrorValues(#"Previous Step", {{"Descripción", ""}})
 
 
