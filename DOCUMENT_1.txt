@@ -140,4 +140,8 @@ Sometido ACH reverso
 )
 
 
+fecha reporte promesas ACH reversa
+
+= Table.AddColumn(#"Previous Step", "FechaReporte", each try Date.From(Text.Range([Source.Name], Text.Length([Source.Name]) - 15, 10)) otherwise null)
+
 
