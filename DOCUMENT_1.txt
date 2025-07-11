@@ -115,23 +115,18 @@ Codigo anterior: = Table.AddColumn(#"Added Custom2", "Respuesta", each if [Dicta
 FechaReporte
 
 
-= Table.AddColumn(#"Previous Step", "FechaReporte", each 
+= try
     let
-        fileName = [Source.Name],
-        // Encuentra el patrón de fecha tipo "dd-mm-yy" (8 caracteres con dos guiones)
-        matches = Text.Select(fileName, {"0".."9", "-"}),
-        dateParts = Text.Split(matches, "-"),
-        // Asegura que tenga 3 partes y construye la fecha
-        fecha = if List.Count(dateParts) = 3 then
-            let
-                day = dateParts{0},
-                month = dateParts{1},
-                year = "20" & dateParts{2}
-            in
-                try Date.FromText(year & "-" & month & "-" & day) otherwise null
-        else null
+        nombreArchivo = [Source.Name],
+        textoFecha = Text.Middle(Text.Select(nombreArchivo, {"0".."9", "-"}), 0, 8), // Extrae los primeros 8 caracteres del número
+        partesFecha = Text.Split(textoFecha, "-"),
+        dia = partesFecha{0},
+        mes = partesFecha{1},
+        anio = "20" & partesFecha{2},
+        fecha = Date.FromText(anio & "-" & mes & "-" & dia)
     in
         fecha
-)
+otherwise null
+
 
 
