@@ -110,5 +110,28 @@ Codigo anterior: = Table.AddColumn(#"Added Custom2", "Respuesta", each if [Dicta
 )
 
 
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''RESOLUTOR MASIVO ACH REVERSA''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+FechaReporte
+
+
+= Table.AddColumn(#"Previous Step", "FechaReporte", each 
+    let
+        fileName = [Source.Name],
+        // Encuentra el patrón de fecha tipo "dd-mm-yy" (8 caracteres con dos guiones)
+        matches = Text.Select(fileName, {"0".."9", "-"}),
+        dateParts = Text.Split(matches, "-"),
+        // Asegura que tenga 3 partes y construye la fecha
+        fecha = if List.Count(dateParts) = 3 then
+            let
+                day = dateParts{0},
+                month = dateParts{1},
+                year = "20" & dateParts{2}
+            in
+                try Date.FromText(year & "-" & month & "-" & day) otherwise null
+        else null
+    in
+        fecha
+)
 
 
