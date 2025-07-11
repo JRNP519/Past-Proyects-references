@@ -113,20 +113,31 @@ Codigo anterior: = Table.AddColumn(#"Added Custom2", "Respuesta", each if [Dicta
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''RESOLUTOR MASIVO ACH REVERSA''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 FechaReporte
+En proceso ACH reverso
 
-
-= try
+= Table.AddColumn(#"Changed Type", "FechaReporte", each 
     let
         nombreArchivo = [Source.Name],
-        textoFecha = Text.Middle(Text.Select(nombreArchivo, {"0".."9", "-"}), 0, 8), // Extrae los primeros 8 caracteres del número
-        partesFecha = Text.Split(textoFecha, "-"),
-        dia = partesFecha{0},
-        mes = partesFecha{1},
-        anio = "20" & partesFecha{2},
-        fecha = Date.FromText(anio & "-" & mes & "-" & dia)
+        fechaTexto = Text.Middle(nombreArchivo, Text.Length(nombreArchivo) - 14, 8),
+        dia = Text.Middle(fechaTexto, 0, 2),
+        mes = Text.Middle(fechaTexto, 3, 2),
+        año = "20" & Text.End(fechaTexto, 2)
     in
-        fecha
-otherwise null
+        dia & "/" & mes & "/" & año
+)
+
+Sometido ACH reverso
+
+= Table.AddColumn(#"Changed Type", "FechaReporte", each 
+    let
+        nombreArchivo = [Source.Name],
+        fechaTexto = Text.Middle(nombreArchivo, Text.Length(nombreArchivo) - 14, 8),
+        dia = Text.Middle(fechaTexto, 0, 2),
+        mes = Text.Middle(fechaTexto, 3, 2),
+        año = "20" & Text.End(fechaTexto, 2)
+    in
+        dia & "/" & mes & "/" & año
+)
 
 
 
