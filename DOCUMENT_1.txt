@@ -150,17 +150,18 @@ fecha reporte promesas ACH reversa
 
 
 
-
 = Table.AddColumn(#"Changed Type", "FechaReporte", each try
     let
         fechaTexto = Text.BeforeDelimiter(Text.AfterDelimiter([Source.Name], "LBTR  NO PROCESADA "), ".xlsx"),
         dia = Text.Start(fechaTexto, 2),
         mes = Text.Range(fechaTexto, 2, 2),
         año = Text.End(fechaTexto, 4),
-        fechaFormateada = Date.FromText(dia & "/" & mes & "/" & año)
+        fechaFormateada = Date.FromText(año & "-" & mes & "-" & dia)
     in
         fechaFormateada
 otherwise null)
+
+
 
 
 
