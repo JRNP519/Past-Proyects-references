@@ -145,3 +145,18 @@ fecha reporte promesas ACH reversa
 = Table.AddColumn(#"Previous Step", "FechaReporte", each try Date.From(Text.Range([Source.Name], Text.Length([Source.Name]) - 15, 10)) otherwise null)
 
 
+
+
+
+
+
+
+= Table.AddColumn(#"Changed Type", "FechaReporte", each try Date.FromText(
+    Text.BeforeDelimiter(
+        Text.AfterDelimiter([Source.Name], "LBTR NO PROCESADA "),
+        ".xlsx"
+    )
+) otherwise null)
+
+
+
