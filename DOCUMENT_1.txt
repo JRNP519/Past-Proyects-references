@@ -164,5 +164,21 @@ otherwise null)
 
 
 
+#"Added Custom3" = Table.AddColumn(#"Trimmed Text", "Respuesta", each 
+    if [Dictamen Inicial] = "Reclamación Aprobada" then
+        let
+            dateText = Text.From([FechaReporte_LBTR]),
+            parsedDate = Date.FromText(dateText, "es-ES"),
+            weekdayNum = Date.DayOfWeek(parsedDate, Day.Monday),
+            adjustedDate = if weekdayNum = 4 then Date.AddDays(parsedDate, 3) else Date.AddDays(parsedDate, 1)
+        in
+            "Reclamación " & Text.From([Numero reclamación]) &
+            " aprobada. Transacción reversada con el reporte de la fecha " & Date.ToText(adjustedDate, "dd/MM/yyyy")
+    else
+        "No aplica."
+)
+
+
+
 
 
