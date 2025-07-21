@@ -168,15 +168,16 @@ otherwise null)
     if [Dictamen Inicial] = "Reclamación Aprobada" then
         let
             dateText = Text.From([FechaReporte_LBTR]),
-            parsedDate = Date.FromText(dateText, "es-ES"),
+            parsedDate = Date.FromText(dateText, "en-US"),
             weekdayNum = Date.DayOfWeek(parsedDate, Day.Monday),
             adjustedDate = if weekdayNum = 4 then Date.AddDays(parsedDate, 3) else Date.AddDays(parsedDate, 1)
         in
             "Reclamación " & Text.From([Numero reclamación]) &
-            " aprobada. Transacción reversada con el reporte de la fecha " & Date.ToText(adjustedDate, "dd/MM/yyyy")
+            " aprobada. Transacción reversada con el reporte de la fecha " & Date.ToText(adjustedDate, "MM/dd/yyyy")
     else
         "No aplica."
 )
+
 
 
 
