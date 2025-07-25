@@ -180,6 +180,9 @@ otherwise null)
 
 
 
+Para resolver el cruce, resulta que se tienen que usar los primeros 9 digitos de la referencia:
+
+Text.Start(Text.From([Numero de cuenta]), 9) & "-" & Text.From([Referencia]) & "-" & Text.From([Valor])
 
 
 
